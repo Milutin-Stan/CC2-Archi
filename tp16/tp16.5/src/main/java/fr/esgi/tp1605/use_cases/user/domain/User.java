@@ -11,12 +11,14 @@ public final class User implements Entity<UserId> {
     private final String lastname;
     private final String firstname;
     private Address address;
+    private Membership membership;
 
-    public User(UserId id, String lastname, String firstname, Address address) {
+    public User(UserId id, String lastname, String firstname, Address address, Membership membership) {
         this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
         this.address = address;
+        this.membership = membership;
     }
 
     public UserId getId() {
@@ -38,6 +40,14 @@ public final class User implements Entity<UserId> {
 
     public Address getAddress() {
         return address;
+    }
+
+    public Membership getMembership() {
+        return membership;
+    }
+
+    public void setMembership(Membership membership) {
+        this.membership = membership;
     }
 
     public void changeAddress(Address address) {
@@ -63,7 +73,8 @@ public final class User implements Entity<UserId> {
                 "id=" + id +
                 ", lastname='" + lastname + '\'' +
                 ", firstname='" + firstname + '\'' +
-                ", address=" + address +
+                ", address=" + address + '\'' +
+                ", membership=" + membership.getName() +
                 '}';
     }
 }

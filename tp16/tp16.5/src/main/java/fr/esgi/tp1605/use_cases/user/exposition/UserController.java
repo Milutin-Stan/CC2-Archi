@@ -36,20 +36,20 @@ public class UserController {
     @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UsersResponse> getAll() {
         final List<User> users = retrieveUsersHandler.handle(new RetrieveUsers());
-        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(), new AddressResponse(user.getAddress().getCity()))).collect(Collectors.toList()));
+        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(), new AddressResponse(user.getAddress().getCity()), new MembershipResponse(user.getMembership().getName()))).collect(Collectors.toList()));
         return ResponseEntity.ok(usersResponseResult);
     }
 
     @GetMapping(path = "/cities/{city}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<UsersResponse> getUsersByCity(@PathVariable("city") String city) {
         final List<User> users = retrieveUsersByCityHandler.handle(new RetrieveUsersByCity(city));
-        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(), new AddressResponse(user.getAddress().getCity()))).collect(Collectors.toList()));
+        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(), new AddressResponse(user.getAddress().getCity()), new MembershipResponse(user.getMembership().getName()))).collect(Collectors.toList()));
         return ResponseEntity.ok(usersResponseResult);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> create(@RequestBody @Valid UserRequest request) {
-        CreateUser createUser = new CreateUser(request.lastname, request.firstname, new Address(request.address.city));
+        CreateUser createUser = new CreateUser(request.lastname, request.firstname, new Address(request.address.city), request.membership);
         createUserCommandHandler.handle(createUser);
         return ResponseEntity.ok(null);
     }

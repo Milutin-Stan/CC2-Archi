@@ -7,11 +7,13 @@ public class UserResponse {
     //no lastname explicitly
     public final String firstname;
     public final AddressResponse address;
+    public final MembershipResponse membership;
 
-    public UserResponse(String id, String firstname, AddressResponse address) {
+    public UserResponse(String id, String firstname, AddressResponse address, MembershipResponse membership) {
         this.id = id;
         this.firstname = firstname;
         this.address = address;
+        this.membership = membership;
     }
 
     @Override
@@ -19,7 +21,8 @@ public class UserResponse {
         return "UserDTO{" +
                 "id=" + id +
                 ", firstname='" + firstname + '\'' +
-                ", address=" + address +
+                ", address=" + address + '\'' +
+                ", membership=" + membership +
                 '}';
     }
 }
