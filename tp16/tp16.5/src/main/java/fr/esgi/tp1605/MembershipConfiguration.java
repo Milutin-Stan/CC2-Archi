@@ -25,7 +25,7 @@ public class MembershipConfiguration {
     @Bean
     public EventDispatcher<Event> membershipEventDispatcher() {
         final Map<Class<? extends Event>, List<EventListener<? extends Event>>> listenerMap = new HashMap<>();
-        listenerMap.put(CreateMembershipEvent.class, List.of(new CreateUserEventListener()));
+        listenerMap.put(CreateMembershipEvent.class, List.of(new CreateMembershipEventListener()));
         return new DefaultEventDispatcher(listenerMap);
     }
 

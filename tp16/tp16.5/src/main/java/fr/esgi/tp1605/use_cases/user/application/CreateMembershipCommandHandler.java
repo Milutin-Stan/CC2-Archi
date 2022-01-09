@@ -22,6 +22,7 @@ public final class CreateMembershipCommandHandler implements CommandHandler<Crea
         final MembershipId membershipId = membershipRepository.nextIdentity();
         Membership membership = new Membership(membershipId, createMembership.name, createMembership.startDate, createMembership.endDate, createMembership.isActive, createMembership.prix);
         membershipRepository.add(membership);
+        eventEventDispatcher.dispatch(new CreateMembershipEvent(membershipId));
         return membershipId;
     }
 }

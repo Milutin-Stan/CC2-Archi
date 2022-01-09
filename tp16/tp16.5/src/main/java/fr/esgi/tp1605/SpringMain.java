@@ -1,5 +1,10 @@
 package fr.esgi.tp1605;
 
+import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembership;
+import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembershipCommandHandler;
+import fr.esgi.tp1605.use_cases.payment.application.CreatePayment;
+import fr.esgi.tp1605.use_cases.payment.application.CreatePaymentCommandHandler;
+import fr.esgi.tp1605.use_cases.payment.domain.PaymentId;
 import fr.esgi.tp1605.use_cases.user.application.*;
 import fr.esgi.tp1605.use_cases.user.domain.*;
 import org.springframework.boot.SpringApplication;
@@ -17,23 +22,25 @@ public class SpringMain {
         final ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringMain.class, args);
 
 
-        //-5. Create default free  Membership
+        //-0. Create default free Membership
         CreateMembershipCommandHandler membershipCommandHandler = applicationContext.getBean(CreateMembershipCommandHandler.class);
         Date start = new SimpleDateFormat("dd/MM/yyyy").parse("01/02/2021");
         Date end = new SimpleDateFormat("dd/MM/yyyy").parse("01/02/2022");
         CreateMembership createMembership = new CreateMembership("FREE", start, end, false, 0);
         final MembershipId membershipId = membershipCommandHandler.handle(createMembership);
+
         Membership membership = new Membership(membershipId, createMembership.name, createMembership.startDate, createMembership.endDate, createMembership.isActive, createMembership.prix);
         System.out.println((membership.toString()));
 
         //--1. Create User
         CreateUserCommandHandler userCommandHandler = applicationContext.getBean(CreateUserCommandHandler.class);
-        CreateUser createUser = new CreateUser("BOISSINOT", "GREGORY", new Address("PARIS"), membership);
+        CreateUser createUser = new CreateUser("STANOJEVIC", "MILUTIN", new Address("PARIS"), membership);
         final UserId userId = userCommandHandler.handle(createUser);
+        User user = new User(userId, createUser.lastname, createUser.firstname, createUser.address, createUser.membership);
 
         //--2. Modify User Address
         ModifyUserAddressCommandHandler modifyUserAddressCommandHandler = applicationContext.getBean(ModifyUserAddressCommandHandler.class);
-        modifyUserAddressCommandHandler.handle(new ModifyUserAddress(userId.getValue(), new Address("ALFORTVILLE")));
+        modifyUserAddressCommandHandler.handle(new ModifyUserAddress(userId.getValue(), new Address("NICE")));
 
         //--3. Retrieve all users
         RetrieveUsers retrieveUsers = new RetrieveUsers();
@@ -42,9 +49,30 @@ public class SpringMain {
         users.forEach(System.out::println);
 
         //--4. Retrieve user with ALFORTVILLE city
-        RetrieveUsersByCity retrieveUsersByCity = new RetrieveUsersByCity("ALFORTVILLE");
+        RetrieveUsersByCity retrieveUsersByCity = new RetrieveUsersByCity("NICE");
         RetrieveUsersByCityHandler retrieveUsersByCityHandler = applicationContext.getBean(RetrieveUsersByCityHandler.class);
         final List<User> searchedUsers = retrieveUsersByCityHandler.handle(retrieveUsersByCity);
         searchedUsers.forEach(System.out::println);
+
+        //-5. Create new Membership
+
+        CreateMembership createNewMembership = new CreateMembership("PRO", start, end, false, 100);
+        final MembershipId membershipId1 = membershipCommandHandler.handle(createNewMembership);
+        Membership newMembership = new Membership(membershipId1, createNewMembership.name, createNewMembership.startDate, createNewMembership.endDate, createNewMembership.isActive, createNewMembership.prix);
+
+        //-6 Create New Payment (On dit que le payment est passé)
+        CreatePaymentCommandHandler createPaymentCommandHandler = applicationContext.getBean(CreatePaymentCommandHandler.class);
+        CreatePayment createPayment = new CreatePayment(user,newMembership,true);
+        PaymentId paymentId = createPaymentCommandHandler.handle(createPayment);
+
+        //-6 Apply For New Membership
+        ApplyForNewMembershipCommandHandler applyForNewMembershipCommandHandler = applicationContext.getBean(ApplyForNewMembershipCommandHandler.class);
+        applyForNewMembershipCommandHandler.handle(new ApplyForNewMembership(user,newMembership));
+        System.out.println(user.toString());
+
+        //-7 Modify User Membership
+        ModifyUserMembershipCommandHandler modifyUserMembershipCommandHandler = applicationContext.getBean(ModifyUserMembershipCommandHandler.class);
+        modifyUserMembershipCommandHandler.handle(new ModifyUserMembership(user.id().getValue(), newMembership));
+        System.out.println(user.toString());
     }
 }

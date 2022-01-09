@@ -40,6 +40,11 @@ public class UserConfiguration {
         return new ModifyUserAddressCommandHandler(userRepository(), eventEventDispatcher());
     }
 
+    @Bean
+    public ModifyUserMembershipCommandHandler modifyUserMembershipCommandHandler(){
+        return new ModifyUserMembershipCommandHandler(userRepository(), eventEventDispatcher());
+    }
+
 
     @Bean
     public RetrieveUsersHandler retrieveUsersHandler() {

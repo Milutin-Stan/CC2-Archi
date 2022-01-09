@@ -27,13 +27,8 @@
     </dependencyManagement>
 
     <modules>
-        <module>tp16.1</module>
-        <module>tp16.2</module>
-        <module>tp16.3</module>
-        <module>tp16.4</module>
         <module>tp16.5</module>
-        <module>tp16.6</module>
-        <module>tp16.7</module>
+
     </modules>
 
 </project>

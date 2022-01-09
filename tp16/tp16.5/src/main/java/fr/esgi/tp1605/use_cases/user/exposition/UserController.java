@@ -12,6 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,26 +28,41 @@ public class UserController {
     private final CreateUserCommandHandler createUserCommandHandler;
     private final RetrieveUsersHandler retrieveUsersHandler;
     private final RetrieveUsersByCityHandler retrieveUsersByCityHandler;
+    private final CreateMembershipCommandHandler createMemvershipCommandHandler;
 
     @Autowired
-    private UserController(CreateUserCommandHandler createUserCommandHandler, RetrieveUsersHandler retrieveUsersHandler, RetrieveUsersByCityHandler retrieveUsersByCityHandler) {
+    private UserController(CreateUserCommandHandler createUserCommandHandler, RetrieveUsersHandler retrieveUsersHandler, RetrieveUsersByCityHandler retrieveUsersByCityHandler, CreateMembershipCommandHandler createMemvershipCommandHandler) {
         this.createUserCommandHandler = createUserCommandHandler;
         this.retrieveUsersHandler = retrieveUsersHandler;
         this.retrieveUsersByCityHandler = retrieveUsersByCityHandler;
+        this.createMemvershipCommandHandler = createMemvershipCommandHandler;
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UsersResponse> getAll() {
         final List<User> users = retrieveUsersHandler.handle(new RetrieveUsers());
-        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(), new AddressResponse(user.getAddress().getCity()), new MembershipResponse(user.getMembership().getName()))).collect(Collectors.toList()));
+        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(),
+                new AddressResponse(user.getAddress().getCity()),
+                new MembershipResponse(user.getMembership().getName()))).collect(Collectors.toList()));
         return ResponseEntity.ok(usersResponseResult);
     }
 
     @GetMapping(path = "/cities/{city}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<UsersResponse> getUsersByCity(@PathVariable("city") String city) {
         final List<User> users = retrieveUsersByCityHandler.handle(new RetrieveUsersByCity(city));
-        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(), new AddressResponse(user.getAddress().getCity()), new MembershipResponse(user.getMembership().getName()))).collect(Collectors.toList()));
+        UsersResponse usersResponseResult = new UsersResponse(users.stream().map(user -> new UserResponse(String.valueOf(user.getId().getValue()), user.getFirstname(),
+                new AddressResponse(user.getAddress().getCity()),
+                new MembershipResponse(user.getMembership().getName()))).collect(Collectors.toList()));
         return ResponseEntity.ok(usersResponseResult);
+    }
+
+    @PostMapping(path="/membership/create",produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<MembershipResponse> getMembershipByName(@RequestBody @Valid MembershipRequest membershipRequest) throws ParseException {
+        Date start = new SimpleDateFormat("dd/MM/yyyy").parse("01/02/2021");
+        Date end = new SimpleDateFormat("dd/MM/yyyy").parse("01/02/2022");
+        CreateMembership createMembership = new CreateMembership(membershipRequest.name,start,end,true,0.0);
+        createMemvershipCommandHandler.handle(createMembership);
+        return ResponseEntity.ok(null);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
