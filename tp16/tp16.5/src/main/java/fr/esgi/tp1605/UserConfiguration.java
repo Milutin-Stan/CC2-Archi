@@ -1,8 +1,8 @@
 package fr.esgi.tp1605;
 
-import fr.esgi.tp1605.kernel.Event;
-import fr.esgi.tp1605.kernel.EventDispatcher;
-import fr.esgi.tp1605.kernel.EventListener;
+import fr.esgi.tp1605.kernel.*;
+import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembership;
+import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembershipCommandHandler;
 import fr.esgi.tp1605.use_cases.user.application.*;
 import fr.esgi.tp1605.use_cases.user.domain.UserRepository;
 import fr.esgi.tp1605.use_cases.user.infrastructure.DefaultEventDispatcher;
@@ -27,6 +27,7 @@ public class UserConfiguration {
         final Map<Class<? extends Event>, List<EventListener<? extends Event>>> listenerMap = new HashMap<>();
         listenerMap.put(ModifyUserAddressEvent.class, List.of(new ModifyUserAddressEventListener()));
         listenerMap.put(CreateUserEvent.class, List.of(new CreateUserEventListener()));
+        listenerMap.put(ModifyUserMembershipEvent.class, List.of(new ModifyUserMembershipEventListener()));
         return new DefaultEventDispatcher(listenerMap);
     }
 

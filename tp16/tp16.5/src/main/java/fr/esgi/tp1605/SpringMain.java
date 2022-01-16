@@ -1,5 +1,6 @@
 package fr.esgi.tp1605;
 
+import fr.esgi.tp1605.kernel.CommandBus;
 import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembership;
 import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembershipCommandHandler;
 import fr.esgi.tp1605.use_cases.payment.application.CreatePayment;
@@ -21,6 +22,7 @@ public class SpringMain {
     public static void main(String[] args) throws ParseException {
         final ConfigurableApplicationContext applicationContext = SpringApplication.run(SpringMain.class, args);
 
+        CommandBus paymentCommandBus = applicationContext.getBean(CommandBus.class);
 
         //-0. Create default free Membership
         CreateMembershipCommandHandler membershipCommandHandler = applicationContext.getBean(CreateMembershipCommandHandler.class);
@@ -59,15 +61,17 @@ public class SpringMain {
         CreateMembership createNewMembership = new CreateMembership("PRO", start, end, false, 100);
         final MembershipId membershipId1 = membershipCommandHandler.handle(createNewMembership);
         Membership newMembership = new Membership(membershipId1, createNewMembership.name, createNewMembership.startDate, createNewMembership.endDate, createNewMembership.isActive, createNewMembership.prix);
+        System.out.println((newMembership.toString()));
 
         //-6 Create New Payment (On dit que le payment est passé)
         CreatePaymentCommandHandler createPaymentCommandHandler = applicationContext.getBean(CreatePaymentCommandHandler.class);
         CreatePayment createPayment = new CreatePayment(user,newMembership,true);
-        PaymentId paymentId = createPaymentCommandHandler.handle(createPayment);
+        PaymentId paymentId = paymentCommandBus.send(createPayment);
+        //PaymentId paymentId = createPaymentCommandHandler.handle(createPayment);
 
         //-6 Apply For New Membership
-        ApplyForNewMembershipCommandHandler applyForNewMembershipCommandHandler = applicationContext.getBean(ApplyForNewMembershipCommandHandler.class);
-        applyForNewMembershipCommandHandler.handle(new ApplyForNewMembership(user,newMembership));
+        ApplyForNewMembership applyForNewMembership = new ApplyForNewMembership(user,newMembership);
+        paymentCommandBus.send(applyForNewMembership);
         System.out.println(user.toString());
 
         //-7 Modify User Membership
