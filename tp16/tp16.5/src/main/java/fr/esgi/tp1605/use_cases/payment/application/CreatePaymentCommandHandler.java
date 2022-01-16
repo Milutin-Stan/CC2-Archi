@@ -9,13 +9,9 @@ import fr.esgi.tp1605.use_cases.payment.domain.PaymentRepository;
 
 public class CreatePaymentCommandHandler implements CommandHandler<CreatePayment, PaymentId> {
 
-    private PaymentRepository paymentRepository;
-    private EventDispatcher<Event> eventEventDispatcher;
     private PaymentService paymentService;
 
-    public CreatePaymentCommandHandler(PaymentRepository paymentRepository, EventDispatcher<Event> eventEventDispatcher, PaymentService paymentService) {
-        this.paymentRepository = paymentRepository;
-        this.eventEventDispatcher = eventEventDispatcher;
+    public CreatePaymentCommandHandler(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
 

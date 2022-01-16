@@ -1,4 +1,4 @@
-package fr.esgi.tp1605;
+/*package fr.esgi.tp1605;
 
 import fr.esgi.tp1605.kernel.Event;
 import fr.esgi.tp1605.kernel.EventDispatcher;
@@ -34,3 +34,4 @@ public class MembershipConfiguration {
         return new CreateMembershipCommandHandler(membershipRepository(),membershipEventDispatcher());
     }
 }
+*/

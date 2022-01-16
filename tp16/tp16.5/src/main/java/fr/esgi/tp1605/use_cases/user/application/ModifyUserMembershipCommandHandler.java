@@ -3,29 +3,20 @@ package fr.esgi.tp1605.use_cases.user.application;
 import fr.esgi.tp1605.kernel.CommandHandler;
 import fr.esgi.tp1605.kernel.Event;
 import fr.esgi.tp1605.kernel.EventDispatcher;
-import fr.esgi.tp1605.use_cases.user.domain.Address;
-import fr.esgi.tp1605.use_cases.user.domain.Membership;
 import fr.esgi.tp1605.use_cases.user.domain.UserId;
 import fr.esgi.tp1605.use_cases.user.domain.UserRepository;
 
 public class ModifyUserMembershipCommandHandler implements CommandHandler<ModifyUserMembership, Void> {
 
-    private final UserRepository userRepository;
-    private final EventDispatcher<Event> eventEventDispatcher;
+    private final UserService userService;
 
-    public ModifyUserMembershipCommandHandler(UserRepository userRepository, EventDispatcher<Event> eventEventDispatcher) {
-        this.userRepository = userRepository;
-        this.eventEventDispatcher = eventEventDispatcher;
+    public ModifyUserMembershipCommandHandler(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     public Void handle(ModifyUserMembership command) {
-        var userId = new UserId(command.userId);
-        var user = userRepository.findById(userId);
-        var membership = command.membership;
-        user.setMembership(membership);
-        userRepository.add(user);
-        eventEventDispatcher.dispatch(new ModifyUserMembershipEvent(userId));
+        userService.modifyUserMembership(command);
         return null;
     }
 }

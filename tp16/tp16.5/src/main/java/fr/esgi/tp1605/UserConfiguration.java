@@ -1,8 +1,6 @@
-package fr.esgi.tp1605;
+/*package fr.esgi.tp1605;
 
 import fr.esgi.tp1605.kernel.*;
-import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembership;
-import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembershipCommandHandler;
 import fr.esgi.tp1605.use_cases.user.application.*;
 import fr.esgi.tp1605.use_cases.user.domain.UserRepository;
 import fr.esgi.tp1605.use_cases.user.infrastructure.DefaultEventDispatcher;
@@ -20,6 +18,11 @@ public class UserConfiguration {
     @Bean
     public UserRepository userRepository() {
         return new InMemoryUserRepository();
+    }
+
+    @Bean
+    public UserService userService(){
+        return new UserService(userRepository(),eventEventDispatcher());
     }
 
     @Bean
@@ -43,7 +46,7 @@ public class UserConfiguration {
 
     @Bean
     public ModifyUserMembershipCommandHandler modifyUserMembershipCommandHandler(){
-        return new ModifyUserMembershipCommandHandler(userRepository(), eventEventDispatcher());
+        return new ModifyUserMembershipCommandHandler(userService());
     }
 
 
@@ -56,4 +59,12 @@ public class UserConfiguration {
     public RetrieveUsersByCityHandler retrieveUsersByCityHandler() {
         return new RetrieveUsersByCityHandler(userRepository());
     }
+
+   /* @Bean
+    public CommandBus userCommandBus() {
+        final Map<Class<? extends Command>, CommandHandler> commandHandlerMap = new HashMap<>();
+        commandHandlerMap.put(ModifyUserMembership.class, new ModifyUserAddressCommandHandler(userRepository(), eventEventDispatcher()));
+        return new SimpleCommandBus(commandHandlerMap);
+    }
 }
+*/

@@ -1,4 +1,4 @@
-package fr.esgi.tp1605;
+/*package fr.esgi.tp1605;
 
 import fr.esgi.tp1605.kernel.*;
 import fr.esgi.tp1605.use_cases.payment.application.*;
@@ -53,3 +53,4 @@ public class PaymentConfiguration {
         return new SimpleCommandBus(commandHandlerMap);
     }
 }
+*/

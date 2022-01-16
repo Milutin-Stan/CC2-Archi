@@ -70,13 +70,13 @@ public class SpringMain {
         //PaymentId paymentId = createPaymentCommandHandler.handle(createPayment);
 
         //-6 Apply For New Membership
-        ApplyForNewMembership applyForNewMembership = new ApplyForNewMembership(user,newMembership);
-        paymentCommandBus.send(applyForNewMembership);
-        System.out.println(user.toString());
+        //ApplyForNewMembership applyForNewMembership = new ApplyForNewMembership(user,newMembership);
+        //paymentCommandBus.send(applyForNewMembership);
+        //System.out.println(user.toString());
 
         //-7 Modify User Membership
-        ModifyUserMembershipCommandHandler modifyUserMembershipCommandHandler = applicationContext.getBean(ModifyUserMembershipCommandHandler.class);
-        modifyUserMembershipCommandHandler.handle(new ModifyUserMembership(user.id().getValue(), newMembership));
-        System.out.println(user.toString());
+        //ModifyUserMembership modifyUserMembership = new ModifyUserMembership(user.id().getValue(), newMembership);
+        //paymentCommandBus.send(modifyUserMembership);
+        //System.out.println(user.toString());
     }
 }
