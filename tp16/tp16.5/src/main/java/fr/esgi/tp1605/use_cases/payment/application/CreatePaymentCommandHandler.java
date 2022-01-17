@@ -7,16 +7,28 @@ import fr.esgi.tp1605.use_cases.payment.domain.Payment;
 import fr.esgi.tp1605.use_cases.payment.domain.PaymentId;
 import fr.esgi.tp1605.use_cases.payment.domain.PaymentRepository;
 
+
 public class CreatePaymentCommandHandler implements CommandHandler<CreatePayment, PaymentId> {
 
-    private PaymentService paymentService;
+    private final PaymentRepository paymentRepository;
+    private final EventDispatcher<Event> eventDispatcher;
 
-    public CreatePaymentCommandHandler(PaymentService paymentService) {
-        this.paymentService = paymentService;
+
+    public CreatePaymentCommandHandler(PaymentRepository paymentRepository, EventDispatcher<Event> eventDispatcher) {
+        this.paymentRepository = paymentRepository;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
     public PaymentId handle(CreatePayment createPayment) {
-        return paymentService.createPayment(createPayment);
+        final PaymentId paymentId = paymentRepository.nextIdentity();
+        Payment payment = new Payment(paymentId, createPayment.user, createPayment.membership, createPayment.paymentAccepted);
+        paymentRepository.add(payment);
+        eventDispatcher.dispatch(new CreatePaymentEvent(createPayment.user, createPayment.membership));
+        //eventEventDispatcher.dispatch(new ApplyForNewMembershipEvent(createPayment.user, createPayment.membership));
+        //Ceci est un test en plain debug
+        //ApplyForNewMembership applyForNewMembership = new ApplyForNewMembership(createPayment.user, createPayment.membership);
+        //applyForNewMembership(applyForNewMembership);
+        return paymentId;
     }
 }

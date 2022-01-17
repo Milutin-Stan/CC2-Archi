@@ -1,8 +1,6 @@
 package fr.esgi.tp1605;
 
 import fr.esgi.tp1605.kernel.CommandBus;
-import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembership;
-import fr.esgi.tp1605.use_cases.payment.application.ApplyForNewMembershipCommandHandler;
 import fr.esgi.tp1605.use_cases.payment.application.CreatePayment;
 import fr.esgi.tp1605.use_cases.payment.application.CreatePaymentCommandHandler;
 import fr.esgi.tp1605.use_cases.payment.domain.PaymentId;
@@ -67,16 +65,6 @@ public class SpringMain {
         CreatePaymentCommandHandler createPaymentCommandHandler = applicationContext.getBean(CreatePaymentCommandHandler.class);
         CreatePayment createPayment = new CreatePayment(user,newMembership,true);
         PaymentId paymentId = paymentCommandBus.send(createPayment);
-        //PaymentId paymentId = createPaymentCommandHandler.handle(createPayment);
 
-        //-6 Apply For New Membership
-        ApplyForNewMembership applyForNewMembership = new ApplyForNewMembership(user,newMembership);
-        paymentCommandBus.send(applyForNewMembership);
-        //System.out.println(user.toString());
-
-        //-7 Modify User Membership
-        //ModifyUserMembership modifyUserMembership = new ModifyUserMembership(user.id().getValue(), newMembership);
-        //paymentCommandBus.send(modifyUserMembership);
-        //System.out.println(user.toString());
     }
 }

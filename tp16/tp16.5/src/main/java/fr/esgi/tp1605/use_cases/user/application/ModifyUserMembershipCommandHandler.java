@@ -8,15 +8,22 @@ import fr.esgi.tp1605.use_cases.user.domain.UserRepository;
 
 public class ModifyUserMembershipCommandHandler implements CommandHandler<ModifyUserMembership, Void> {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final EventDispatcher<Event> eventDispatcher;
 
-    public ModifyUserMembershipCommandHandler(UserService userService) {
-        this.userService = userService;
+    public ModifyUserMembershipCommandHandler(UserRepository userRepository, EventDispatcher<Event> eventDispatcher) {
+        this.userRepository = userRepository;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
     public Void handle(ModifyUserMembership command) {
-        userService.modifyUserMembership(command);
+        var userId = new UserId(command.userId);
+        var user = userRepository.findById(userId);
+        var membership = command.membership;
+        user.setMembership(membership);
+        userRepository.add(user);
+        eventDispatcher.dispatch(new ModifyUserMembershipEvent(userId));
         return null;
     }
 }

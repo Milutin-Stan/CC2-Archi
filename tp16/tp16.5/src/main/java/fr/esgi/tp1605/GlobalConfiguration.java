@@ -27,11 +27,6 @@ public class GlobalConfiguration {
     }
 
     @Bean
-    public UserService userService(){
-        return new UserService(userRepository(),eventEventDispatcher());
-    }
-
-    @Bean
     public EventDispatcher<Event> eventEventDispatcher() {
         final Map<Class<? extends Event>, List<EventListener<? extends Event>>> listenerMap = new HashMap<>();
         listenerMap.put(ModifyUserAddressEvent.class, List.of(new ModifyUserAddressEventListener()));
@@ -52,7 +47,7 @@ public class GlobalConfiguration {
 
     @Bean
     public ModifyUserMembershipCommandHandler modifyUserMembershipCommandHandler(){
-        return new ModifyUserMembershipCommandHandler(userService());
+        return new ModifyUserMembershipCommandHandler(userRepository(),eventEventDispatcher());
     }
 
 
@@ -88,21 +83,16 @@ public class GlobalConfiguration {
     }
 
     @Bean
-    public PaymentService paymentService(){
-        return new PaymentService(paymentRepository(), paymentEventDispatcher());
-    }
-
-    @Bean
     public EventDispatcher<Event> paymentEventDispatcher() {
         final Map<Class<? extends Event>, List<EventListener<? extends Event>>> listenerMap = new HashMap<>();
-        listenerMap.put(CreatePaymentEvent.class, List.of(new CreatePaymentEventListener()));
-        listenerMap.put(ApplyForNewMembershipEvent.class, List.of(new ApplyForNewMembershipEventListener(userService())));
+        listenerMap.put(CreatePaymentEvent.class, List.of(new CreatePaymentEventListener(modifyUserMembershipCommandHandler())));
+        //listenerMap.put(ApplyForNewMembershipEvent.class, List.of(new ApplyForNewMembershipEventListener(userService())));
         return new DefaultEventDispatcher(listenerMap);
     }
 
     @Bean
     public CreatePaymentCommandHandler createPaymentCommandHandler(){
-        return new CreatePaymentCommandHandler(paymentService());
+        return new CreatePaymentCommandHandler(paymentRepository(), paymentEventDispatcher());
     }
 
     @Bean
@@ -115,17 +105,12 @@ public class GlobalConfiguration {
         return new RetrieveMembershipsHandler(membershipRepository());
     }
 
-    @Bean
-    public ApplyForNewMembershipCommandHandler applyForNewMembershipCommandHandler(){
-        return new ApplyForNewMembershipCommandHandler(paymentRepository(),paymentEventDispatcher(), paymentService());
-    }
 
     @Bean
     public CommandBus commandBus() {
         final Map<Class<? extends Command>, CommandHandler> commandHandlerMap = new HashMap<>();
-        commandHandlerMap.put(ApplyForNewMembership.class, new ApplyForNewMembershipCommandHandler(paymentRepository(), paymentEventDispatcher(), paymentService()));
-        commandHandlerMap.put(CreatePayment.class, new CreatePaymentCommandHandler(paymentService()));
-        commandHandlerMap.put(ModifyUserMembership.class, new ModifyUserMembershipCommandHandler(userService()));
+        commandHandlerMap.put(CreatePayment.class, createPaymentCommandHandler());
+        commandHandlerMap.put(ModifyUserMembership.class, modifyUserMembershipCommandHandler());
         return new SimpleCommandBus(commandHandlerMap);
     }
 }

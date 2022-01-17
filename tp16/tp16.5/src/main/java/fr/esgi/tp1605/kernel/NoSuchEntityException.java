@@ -1,6 +1,5 @@
 package fr.esgi.tp1605.kernel;
 
-import fr.esgi.tp1605.use_cases.user.domain.MembershipId;
 import fr.esgi.tp1605.use_cases.user.domain.UserId;
 
 public final class NoSuchEntityException extends RuntimeException {
