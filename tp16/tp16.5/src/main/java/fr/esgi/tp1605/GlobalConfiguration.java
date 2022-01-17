@@ -106,6 +106,16 @@ public class GlobalConfiguration {
     }
 
     @Bean
+    public RetrievePaymentsHandler retrievePaymentsHandler(){
+        return new RetrievePaymentsHandler(paymentRepository());
+    }
+
+    @Bean
+    public RetrieveMembershipsHandler retrieveMembershipsHandler(){
+        return new RetrieveMembershipsHandler(membershipRepository());
+    }
+
+    @Bean
     public ApplyForNewMembershipCommandHandler applyForNewMembershipCommandHandler(){
         return new ApplyForNewMembershipCommandHandler(paymentRepository(),paymentEventDispatcher(), paymentService());
     }

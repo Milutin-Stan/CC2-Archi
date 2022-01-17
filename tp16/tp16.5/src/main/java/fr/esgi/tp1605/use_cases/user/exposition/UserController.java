@@ -2,6 +2,7 @@ package fr.esgi.tp1605.use_cases.user.exposition;
 
 import fr.esgi.tp1605.use_cases.user.application.*;
 import fr.esgi.tp1605.use_cases.user.domain.Address;
+import fr.esgi.tp1605.use_cases.user.domain.Membership;
 import fr.esgi.tp1605.use_cases.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,13 +30,15 @@ public class UserController {
     private final RetrieveUsersHandler retrieveUsersHandler;
     private final RetrieveUsersByCityHandler retrieveUsersByCityHandler;
     private final CreateMembershipCommandHandler createMemvershipCommandHandler;
+    private final RetrieveMembershipsHandler retrieveMembershipsHandler;
 
     @Autowired
-    private UserController(CreateUserCommandHandler createUserCommandHandler, RetrieveUsersHandler retrieveUsersHandler, RetrieveUsersByCityHandler retrieveUsersByCityHandler, CreateMembershipCommandHandler createMemvershipCommandHandler) {
+    private UserController(CreateUserCommandHandler createUserCommandHandler, RetrieveUsersHandler retrieveUsersHandler, RetrieveUsersByCityHandler retrieveUsersByCityHandler, CreateMembershipCommandHandler createMemvershipCommandHandler, RetrieveMembershipsHandler retrieveMembershipsHandler) {
         this.createUserCommandHandler = createUserCommandHandler;
         this.retrieveUsersHandler = retrieveUsersHandler;
         this.retrieveUsersByCityHandler = retrieveUsersByCityHandler;
         this.createMemvershipCommandHandler = createMemvershipCommandHandler;
+        this.retrieveMembershipsHandler = retrieveMembershipsHandler;
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -63,6 +66,13 @@ public class UserController {
         CreateMembership createMembership = new CreateMembership(membershipRequest.name,start,end,true,0.0);
         createMemvershipCommandHandler.handle(createMembership);
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping(path = "/memberships" , produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<MembershipsResponse> getAllMemberships(){
+        final List<Membership> memberships = retrieveMembershipsHandler.handle(new RetrieveMemberships());
+        MembershipsResponse membershipsResponse = new MembershipsResponse(memberships.stream().map(membership -> new MembershipResponse(String.valueOf(membership.getName()))).collect(Collectors.toList()));
+        return ResponseEntity.ok(membershipsResponse);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

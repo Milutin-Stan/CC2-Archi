@@ -24,8 +24,8 @@ public class PaymentService {
         paymentRepository.add(payment);
         eventEventDispatcher.dispatch(new CreatePaymentEvent(createPayment.user, createPayment.membership));
         //Ceci est un test en plain debug
-        ApplyForNewMembership applyForNewMembership = new ApplyForNewMembership(createPayment.user, createPayment.membership);
-        applyForNewMembership(applyForNewMembership);
+        //ApplyForNewMembership applyForNewMembership = new ApplyForNewMembership(createPayment.user, createPayment.membership);
+        //applyForNewMembership(applyForNewMembership);
         return paymentId;
     }
 
